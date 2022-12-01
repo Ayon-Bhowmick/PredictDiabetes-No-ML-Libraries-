@@ -1,1 +1,1 @@
-# TinyImageNet
+# PredictDiabetes
