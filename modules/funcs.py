@@ -1,6 +1,5 @@
 import numpy as np
-from scipy.special import logsumexp
-from scipy.special import xlogy, xlog1py
+from scipy.special import xlogy
 
 class Sigmoid:
     @staticmethod
@@ -34,3 +33,18 @@ class ReLU:
         Gradient of ReLU at Z
         """
         return (Z > 0).astype(int)
+
+class CrossEntropyLoss:
+    @staticmethod
+    def loss(Y, Y_hat):
+        """
+        Averaged cross entropy loss
+        """
+        return -np.mean(np.sum(xlogy(Y, Y_hat), axis=0))
+
+    @staticmethod
+    def gradient(Y, Y_hat):
+        """
+        Gradients on the training examples
+        """
+        return Y_hat - Y
