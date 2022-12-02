@@ -8,7 +8,5 @@ with open("..\\data\\diabetes.csv", "r") as f:
 y: np.ndarray[float] = data[:, -1].astype(float)
 X: np.ndarray[float] = data[:, :-1].astype(float)
 
-with open("..\\data\\y.pickle", "wb") as f:
-    pickle.dump(y, f)
-with open("..\\data\\X.pickle", "wb") as f:
-    pickle.dump(X, f)
+with open("..\\data\\data.pkl", "wb") as f:
+    pickle.dump((X, y), f)
