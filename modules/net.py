@@ -3,6 +3,9 @@ import numpy as np
 
 class Net:
     def __init__(self, dimensions, activation_funcs, loss_func):
+        """
+        L-layer feed forward network.
+        """
         self.layers = len(dimensions) - 1
         self.loss_func = loss_func
 
@@ -25,6 +28,9 @@ class Net:
         self.db = {}
 
     def forward(self, X):
+        """
+        forward computation of activations at each layer.
+        """
         self.A[0] = X
         for l in range(1, self.num_layers + 1):
             self.Z[l] = self.W[l] @ self.A[l - 1] + self.b[l]
@@ -32,6 +38,9 @@ class Net:
         return self.A[l]
 
     def backward(self, Y):
+        """
+        back propagation to compute the gradients of parameters at all layers.
+        """
         B = 1 / Y.shape[1]
 
         self.dZ[self.num_layers] = self.A[self.num_layers] - Y
@@ -77,11 +86,12 @@ class Net:
                    print(', test error = {}'.format(prediction_accuracy))
 
     def test(self, **kwargs):
+        """
+        test accuracy of the trained model
+        """
         X_test = kwargs['Test X']
         Y_test = kwargs['Test Y']
-
         loss_func = kwargs['Test loss function name']
-
         output = self.forward(X_test)
 
         if loss_func == '0-1 error':
