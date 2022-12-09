@@ -100,3 +100,6 @@ class Net:
             return 1.0 - accuracy_score(np.array(true_labels).flatten(), np.array(predicted_labels).flatten())
         else:
             return np.linalg.norm(output - Y_test) ** 2 / (2 * Y_test.shape[1])
+
+def accuracy_score(y_true, y_pred):
+    return np.sum(y_true == y_pred) / len(y_true)
