@@ -12,7 +12,7 @@ class Net:
         self.b = {}
         self.g = {}
         num_neurons = {}
-        for l in range(self.num_layers):
+        for l in range(self.layers):
             num_neurons[l + 1] = dimensions[l + 1]
             nin, nout = dimensions[l], dimensions[l + 1]
             sd = np.sqrt(2.0 / (nin + nout))
@@ -31,7 +31,7 @@ class Net:
         forward computation of activations at each layer.
         """
         self.A[0] = X
-        for l in range(1, self.num_layers + 1):
+        for l in range(1, self.layers + 1):
             self.Z[l] = self.W[l] @ self.A[l - 1] + self.b[l]
             self.A[l] = self.g[l].activate(self.Z[l])
         return self.A[l]
@@ -42,11 +42,11 @@ class Net:
         """
         B = 1 / Y.shape[1]
 
-        self.dZ[self.num_layers] = self.A[self.num_layers] - Y
-        self.db[self.num_layers] = ((B * np.ones((1, Y.shape[1]))) @ self.dZ[self.num_layers].T).T
-        self.dW[self.num_layers] =  B * (self.A[self.num_layers] - Y) @ self.A[self.num_layers - 1].T
+        self.dZ[self.layers] = self.A[self.layers] - Y
+        self.db[self.layers] = ((B * np.ones((1, Y.shape[1]))) @ self.dZ[self.layers].T).T
+        self.dW[self.layers] =  B * (self.A[self.layers] - Y) @ self.A[self.layers - 1].T
 
-        for l in range(self.num_layers - 1, 0, -1):
+        for l in range(self.layers - 1, 0, -1):
             self.dZ[l] = np.multiply((self.W[l + 1].T * self.dZ[l + 1]), self.g[l].gradient(self.Z[l]))
             self.db[l] = ((B * np.ones((1 ,Y.shape[1]))) * self.dZ[l].T).T
             self.dW[l] = B * self.dZ[l] * self.A[l - 1].T
@@ -54,7 +54,7 @@ class Net:
         return self.dW, self.db
 
     def update_parameters(self, lr, weight_decay = 0.001):
-        for l in range(1, self.num_layers + 1):
+        for l in range(1, self.layers + 1):
             self.W[l] -= lr * self.dW[l] + weight_decay * self.W[l]
             self.b[l] -= lr * self.db[l]
 
@@ -62,14 +62,14 @@ class Net:
         """
         mini-batch stochastic gradient descent
         """
-        X_train = kwargs['Training X']
-        Y_train = kwargs['Training Y']
+        X_train = kwargs["training X"]
+        Y_train = kwargs["training y"]
         num_samples = X_train.shape[1]
-        iter_num = kwargs['max_iters']
-        lr = kwargs['Learning rate']
-        weight_decay = kwargs['Weight decay']
-        batch_size = kwargs['Mini-batch size']
-        record_every = kwargs['record_every']
+        iter_num = kwargs["max_iters"]
+        lr = kwargs["learning rate"]
+        weight_decay = kwargs["weight decay"]
+        batch_size = kwargs["mini-batch size"]
+        record_every = kwargs["record_every"]
 
         for it in range(iter_num):
             for i in range(0, num_samples, batch_size):
@@ -80,20 +80,20 @@ class Net:
                 self.update_parameters(lr, weight_decay)
 
         if (it + 1) % record_every == 0:
-                if 'Test X' in kwargs and 'Test Y' in kwargs:
+                if "test X" in kwargs and "test y" in kwargs:
                    prediction_accuracy = self.test(**kwargs)
-                   print(', test error = {}'.format(prediction_accuracy))
+                   print(", test error = {}".format(prediction_accuracy))
 
     def test(self, **kwargs):
         """
         test accuracy of the trained model
         """
-        X_test = kwargs['Test X']
-        Y_test = kwargs['Test Y']
-        loss_func = kwargs['Test loss function name']
+        X_test = kwargs["test X"]
+        Y_test = kwargs["test y"]
+        loss_func = kwargs["test loss"]
         output = self.forward(X_test)
 
-        if loss_func == '0-1 error':
+        if loss_func == "0-1 error":
             predicted_labels = np.argmax(output, axis = 0)
             true_labels = np.argmax(Y_test, axis = 0)
             return 1.0 - accuracy_score(np.array(true_labels).flatten(), np.array(predicted_labels).flatten())
