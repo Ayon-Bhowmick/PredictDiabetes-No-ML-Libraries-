@@ -1,4 +1,3 @@
-from sys import modules
 import numpy as np
 
 class Net:
